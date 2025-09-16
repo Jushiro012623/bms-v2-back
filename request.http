@@ -1,0 +1,20 @@
+### Document ALL
+GET http://127.0.0.1:8001/api/document-requests
+Accept: application/json
+
+### Document SHOW
+GET http://127.0.0.1:8001/api/document-requests/3
+Accept: application/json
+
+### Document STORE
+POST http://127.0.0.1:8001/api/document-requests
+Accept: application/json
+Content-Type: application/json
+
+{
+    "user_id": 1,
+    "doc_type_id": 1,
+    "purpose": "Wala Test Lang",
+    "status": 1,
+    "request_date": "2025-08-29"
+}
