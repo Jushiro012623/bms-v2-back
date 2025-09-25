@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('request_id')->constrained('document_requests')->cascadeOnDelete();
             $table->foreignId('payment_method_id')->constrained()->cascadeOnDelete();
             $table->decimal('amount');
-            $table->string('status')->default('1')->comment('1: unpaid, 2: paid, 3:refunded');
+            $table->string('status')->default('1')->comment('1: pending, 2: paid, 3:refunded');
             $table->timestamp('paid_at');
             $table->timestamps();
         });

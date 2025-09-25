@@ -13,6 +13,7 @@ class DocumentType extends Model
 
     protected $fillable = ['requirements', 'fee', 'description', 'name', 'status'];
 
+    
     /**
      * Get all of the request for the DocumentType
      *

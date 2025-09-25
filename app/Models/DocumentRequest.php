@@ -16,7 +16,6 @@ class DocumentRequest extends Model
     use HasFactory;
 
     protected $fillable = ['user_id', 'doc_type_id', 'purpose', 'status', 'request_date', 'release_date', 'notes'];
-
     /**
      * Get the user that owns the DocumentRequest
      *

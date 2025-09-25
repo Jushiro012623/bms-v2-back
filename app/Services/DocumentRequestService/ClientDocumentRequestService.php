@@ -18,8 +18,8 @@ class ClientDocumentRequestService
     public function index(Request $request, DocumentRequestFilters $filters)
     {
         $documentRequests = DocumentRequest::where('user_id', 1)->filters($filters)
-            ->paginate($request->count ?? 10);
-            
+            ->paginate($request->per_page ?? 5);
+
         return response()->success("Success", DocumentRequestResource::collection($documentRequests));
     }
 
@@ -31,8 +31,9 @@ class ClientDocumentRequestService
         $documentRequest = DocumentRequest::create([
             ...$request->validated(),
             'user_id' => 1,
-        ])->fresh();
+        ]);
 
+        $documentRequest->load('documentType'); // load relation
 
         return response()->success("Success", new DocumentRequestResource($documentRequest));
     }
@@ -50,7 +51,9 @@ class ClientDocumentRequestService
      */
     public function update(UpdateDocumentRequest $request, DocumentRequest $documentRequest)
     {
-        $documentRequest->update($request->validated());
+        // $documentRequest->update($request->validated());
+        $documentRequest->status = 2;
+        $documentRequest->save();
         return response()->success("Success", new DocumentRequestResource($documentRequest));
     }
 
