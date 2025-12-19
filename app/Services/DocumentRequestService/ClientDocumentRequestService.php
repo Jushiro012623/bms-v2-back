@@ -8,6 +8,7 @@ use App\Http\Requests\DocumentRequest\UpdateDocumentRequest;
 use App\Http\Resources\DocumentRequestResource;
 use App\Models\DocumentRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ClientDocumentRequestService
 {
@@ -17,7 +18,7 @@ class ClientDocumentRequestService
      */
     public function index(Request $request, DocumentRequestFilters $filters)
     {
-        $documentRequests = DocumentRequest::where('user_id', 1)->filters($filters)
+        $documentRequests = Auth::user()->requestedDocuments()->filters($filters)
             ->paginate($request->per_page ?? 5);
 
         return response()->success("Success", DocumentRequestResource::collection($documentRequests));
@@ -28,9 +29,8 @@ class ClientDocumentRequestService
      */
     public function store(CreateDocumentRequest $request)
     {
-        $documentRequest = DocumentRequest::create([
+        $documentRequest = Auth::user()->requestedDocuments()->create([
             ...$request->validated(),
-            'user_id' => 1,
         ]);
 
         $documentRequest->load('documentType'); // load relation
@@ -43,6 +43,9 @@ class ClientDocumentRequestService
      */
     public function show(DocumentRequest $documentRequest)
     {
+        if($documentRequest->user_id != Auth::id()){
+            return response()->error('Unauthorized', 401);
+        }
         return response()->success('Document Request Fetched Successfully', new DocumentRequestResource($documentRequest->load(['user', 'documentType'])));
     }
 
@@ -51,6 +54,9 @@ class ClientDocumentRequestService
      */
     public function update(UpdateDocumentRequest $request, DocumentRequest $documentRequest)
     {
+        if($documentRequest->user_id != Auth::id()){
+            return response()->error('Unauthorized', 401);
+        }
         // $documentRequest->update($request->validated());
         $documentRequest->status = 2;
         $documentRequest->save();

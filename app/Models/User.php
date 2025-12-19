@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role_id'
     ];
 
     /**
@@ -34,7 +35,6 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-
     /**
      * Get the attributes that should be cast.
      *
@@ -48,6 +48,12 @@ class User extends Authenticatable
         ];
     }
 
+    public function assignRole($value)
+    {
+        $this->role_id = $value;
+        $this->save();
+
+    }
 
     /**
      * Get the role that owns the User

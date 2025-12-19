@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Application;
@@ -20,7 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'jwt' => \App\Http\Middleware\JwtMiddleware::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->renderable(function (Exception $e, Request $request) {
@@ -33,21 +36,19 @@ return Application::configure(basePath: dirname(__DIR__))
                     return response()->error('The provided data is invalid.', $e->errors(), 422);
                 }
                 if ($e instanceof QueryException) {
-                    if ($e instanceof QueryException) {
-                        $errorCode = $e->errorInfo[1] ?? null;
+                    $errorCode = $e->errorInfo[1] ?? null;
 
-                        [$title, $code] = match ($errorCode) {
-                            1451 => ['Foreign key constraint violation.', 409],
-                            1062 => ['Duplicate entry constraint violation.', 409],
-                            default => ['Unknown database error.', 500],
-                        };
+                    [$title, $code] = match ($errorCode) {
+                        1451 => ['Foreign key constraint violation.', 409],
+                        1062 => ['Duplicate entry constraint violation.', 409],
+                        default => ['Unknown database error.', 500],
+                    };
 
-                        $details = app()->environment(['local', 'testing'])
-                            ? ['query' => $e->errorInfo[2] ?? null]
-                            : [];
+                    $details = app()->environment(['local', 'testing'])
+                        ? ['query' => $e->errorInfo[2] ?? null]
+                        : [];
 
-                        return response()->error($title, $details, $code);
-                    }
+                    return response()->error($title, $details, $code);
                 }
                 if ($e instanceof MethodNotAllowedHttpException) {
                     return response()->error(
@@ -55,6 +56,12 @@ return Application::configure(basePath: dirname(__DIR__))
                         ['allowed_methods' => $e->getHeaders()['Allow'] ?? 'Unknown'],
                         405
                     );
+                }
+                if($e instanceof \Illuminate\Validation\UnauthorizedException){
+                    return response()->error('Invalid Credentials', [], 401);
+                }
+                if($e instanceof AuthorizationException){
+                    return response()->error('Unauthorized', [], 401);
                 }
 
                 $debug = [

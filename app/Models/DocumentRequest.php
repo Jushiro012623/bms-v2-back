@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Filters\QueryFilters;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,8 @@ class DocumentRequest extends Model
 {
     /** @use HasFactory<\Database\Factories\DocumentRequestFactory> */
     use HasFactory;
+
+
 
     protected $fillable = ['user_id', 'doc_type_id', 'purpose', 'status', 'request_date', 'release_date', 'notes'];
     /**
@@ -35,7 +38,6 @@ class DocumentRequest extends Model
     {
         return $this->hasOne(IssuedDocument::class);
     }
-
 
     /**
      * Get all of the payments for the DocumentRequest
