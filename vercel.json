@@ -13,7 +13,7 @@
     "env": {
         "APP_ENV": "production",
         "APP_DEBUG": "false",
-        "APP_URL": "https://your.url.from.vercel.app",
+        "APP_URL": "https://bms-v2-api.vercel.app/",
         "APP_KEY": "base64:DAgQPNc5+69ba3Xw96pooBCTpAE6D9Xq1pUWrJLvGyQ=",
 
         "APP_CONFIG_CACHE": "/tmp/config.php",
